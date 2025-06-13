@@ -1,0 +1,631 @@
+PEÑITA
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi Página Dinámica con Sorpresa</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            background-color: #000000; /* Fondo negro por defecto */
+            color: #ffffff; /* Color de texto general blanco para contraste */
+            overflow: hidden; /* Evita barras de desplazamiento si la imagen es muy grande */
+        }
+        .container {
+            text-align: center;
+            background-color: #333333; /* Un gris oscuro para el contenedor */
+            padding: 30px 50px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            transition: opacity 0.5s ease-in-out; /* Transición para ocultar/mostrar */
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 18px;
+            cursor: pointer;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+            margin-top: 15px; /* Espacio entre elementos */
+            margin: 5px; /* Espacio entre los botones de opción */
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        /* Estilos para la sección de inicio */
+        #seccionInicio {
+            /* display: flex; /* Se manejará con JS */
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #mensajeSecreto {
+            margin-top: 20px;
+            font-size: 24px;
+            font-weight: bold;
+            /* display: none; /* Se manejará con JS */
+        }
+        /* Estilos para las letras individuales de la frase */
+        .color1 { color: #FF0000; } /* Rojo */
+        .color2 { color: #00FF00; } /* Verde */
+        .color3 { color: #0000FF; } /* Azul */
+        .color4 { color: #FFFF00; } /* Amarillo */
+        .color5 { color: #FF00FF; } /* Magenta */
+        .color6 { color: #00FFFF; } /* Cian */
+        .color7 { color: #FFA500; } /* Naranja */
+
+        /* Estilos para la sección de la imagen (Sorpresa 2) */
+        #seccionImagen {
+            display: none; /* Oculta por defecto */
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            height: 100vh; /* Ocupa toda la altura de la ventana */
+            background-color: #1a1a1a; /* Fondo para la sección de la imagen */
+        }
+        #seccionImagen img {
+            max-width: 90%; /* La imagen no excederá el 90% del ancho de la ventana */
+            max-height: 80vh; /* La imagen no excederá el 80% de la altura de la ventana (dejando espacio para el botón) */
+            border: 5px solid #007bff; /* Borde alrededor de la imagen */
+            border-radius: 8px; /* Bordes ligeramente redondeados */
+            box-shadow: 0 0 20px rgba(0, 123, 255, 0.5); /* Sombra azul brillante */
+            margin-bottom: 20px; /* Espacio debajo de la imagen */
+        }
+
+        /* Estilos para los botones de opción */
+        #opcionesSorpresa {
+            margin-top: 20px;
+            display: none; /* Oculto por defecto, se muestra al presionar "Sorpresa" */
+        }
+
+        /* Estilos para el botón de "Volver al Inicio" en las secciones de sorpresa 1 y 2 */
+        .btnVolverIndividual {
+            margin-top: 20px;
+        }
+
+        /* Estilos para el botón "Sorpresa 3" */
+        #btnSorpresa3 {
+            position: absolute; /* Posicionamiento absoluto para colocarlo en una esquina */
+            bottom: 20px; /* Distancia desde abajo */
+            right: 20px; /* Distancia desde la derecha */
+            padding: 10px 15px;
+            font-size: 16px;
+            background-color: #28a745; /* Color verde */
+            color: white;
+            border: none;
+            border-radius: 5px;
+            z-index: 1000; /* Asegura que esté por encima de otros elementos */
+        }
+        #btnSorpresa3:hover {
+            background-color: #218838;
+        }
+
+        /* Estilos para el botón de recarga (nueva cuarta opción) */
+        #btnRecargaDetectada {
+            position: absolute;
+            top: 20px; /* Esquina superior izquierda */
+            left: 20px;
+            padding: 10px 15px;
+            font-size: 16px;
+            background-color: #ffc107; /* Amarillo */
+            color: black;
+            border: none;
+            border-radius: 5px;
+            display: none; /* Oculto por defecto */
+            z-index: 1000;
+        }
+        #btnRecargaDetectada:hover {
+            background-color: #e0a800;
+        }
+
+
+        /* Estilos para la sección de la IP (Sorpresa 3) */
+        #seccionIP {
+            display: none; /* Oculta por defecto */
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            height: 100vh;
+            background-size: cover; /* Asegura que la imagen de fondo cubra todo el área */
+            background-position: center; /* Centra la imagen de fondo */
+            background-repeat: no-repeat; /* Evita que la imagen se repita */
+            color: #ffffff;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7); /* Sombra para que el texto resalte */
+        }
+        #seccionIP h2 {
+            font-size: 2.5em; /* Tamaño de fuente para el mensaje de rastreo */
+            margin-bottom: 20px;
+            color: #ff0000; /* Rojo para el mensaje de "rastreo" */
+            animation: pulse 1.5s infinite alternate; /* Animación de pulsación */
+        }
+        #seccionIP span {
+            font-size: 3.5em; /* Tamaño de fuente grande para la IP */
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        /* Estilos para la sección de la Encuesta */
+        #seccionEncuesta {
+            display: none; /* Oculta por defecto */
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            height: 100vh;
+            background-color: #1c1c1c; /* Un gris oscuro para la encuesta */
+            color: #e0e0e0;
+            text-align: center;
+            padding: 20px;
+            box-sizing: border-box; /* Incluir padding en el ancho/alto total */
+        }
+        #seccionEncuesta h2 {
+            font-size: 2.2em;
+            margin-bottom: 30px;
+            color: #00bfff; /* Azul brillante para el título */
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+        }
+        #seccionEncuesta p {
+            font-size: 1.1em;
+            margin-bottom: 25px;
+            max-width: 600px;
+        }
+        #seccionEncuesta .pregunta {
+            margin-bottom: 25px;
+            width: 100%;
+            max-width: 500px;
+            text-align: left; /* Alinea etiquetas y radios/checkboxes a la izquierda */
+        }
+        #seccionEncuesta .pregunta label {
+            display: block;
+            margin-bottom: 10px;
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #90ee90; /* Verde claro para las preguntas */
+        }
+        #seccionEncuesta .pregunta input[type="radio"],
+        #seccionEncuesta .pregunta input[type="checkbox"] {
+            margin-right: 10px;
+            transform: scale(1.2); /* Aumenta el tamaño */
+        }
+        #seccionEncuesta .pregunta input[type="radio"] + label,
+        #seccionEncuesta .pregunta input[type="checkbox"] + label {
+            display: inline-block; /* Permite que el texto siga al input */
+            margin-right: 20px;
+            font-weight: normal;
+            color: #ffffff;
+        }
+        #seccionEncuesta button {
+            background-color: #00a0d0;
+            margin-top: 30px;
+            padding: 12px 25px;
+            font-size: 1.3em;
+        }
+        #seccionEncuesta button:hover {
+            background-color: #007bb6;
+        }
+
+        /* Estilos para la sección final de Jair */
+        #seccionJairFinal {
+            display: none; /* Oculta por defecto */
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            height: 100vh;
+            background-color: #0a0a0a; /* Fondo más oscuro */
+            color: #e0e0e0;
+            text-align: center;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        #seccionJairFinal h2 {
+            font-size: 3em; /* Letras grandes */
+            margin-bottom: 40px;
+            color: #ff6347; /* Rojo anaranjado */
+            text-shadow: 2px 2px 5px rgba(0,0,0,0.7);
+        }
+        #seccionJairFinal .pregunta {
+            margin-bottom: 30px;
+            width: 100%;
+            max-width: 500px;
+            text-align: center; /* Centra la pregunta final de Jair */
+        }
+        #seccionJairFinal .pregunta label {
+            font-size: 1.8em; /* Pregunta más grande */
+            color: #ffd700; /* Dorado */
+        }
+        #seccionJairFinal button {
+            background-color: #dc3545; /* Botón rojo de peligro */
+            font-size: 1.5em;
+            padding: 15px 30px;
+        }
+        #seccionJairFinal button:hover {
+            background-color: #c82333;
+        }
+
+        /* Estilos para el mensaje final de la encuesta y Jair */
+        .mensajeFinal {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: #ff4500; /* Naranja rojizo por defecto */
+            margin-top: 40px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
+            animation: bounceIn 1s ease-out;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 1; }
+            100% { transform: scale(1.05); opacity: 0.8; }
+        }
+        @keyframes bounceIn {
+            0% { transform: scale(0.1); opacity: 0; }
+            60% { transform: scale(1.1); opacity: 1; }
+            100% { transform: scale(1); }
+        }
+    </style>
+</head>
+<body>
+    <div id="seccionInicio" class="container">
+        <h1>Hola, yo de nuevo demostrando que soy mejor progra que Mai</h1>
+        <p>Haz clic en el botón para descubrir la sorpresa.</p>
+        <button id="btnSorpresa">Sorpresa</button>
+
+        <div id="opcionesSorpresa">
+            <button id="btnSorpresa1">Sorpresa 1 (Mensaje)</button>
+            <button id="btnSorpresa2">Sorpresa 2 (Imagen)</button>
+        </div>
+
+        <div id="contenedorMensaje">
+            <div id="mensajeSecreto" style="display: none;">
+                <span class="color1">J</span>
+                <span class="color2">a</span>
+                <span class="color3">i</span>
+                <span class="color4">r</span>
+                &nbsp; <span class="color5">M</span>
+                <span class="color6">e</span>
+                &nbsp; <span class="color7">l</span>
+                <span class="color1">a</span>
+                &nbsp; <span class="color2">P</span>
+                <span class="color3">e</span>
+                <span class="color4">l</span>
+                <span class="color5">a</span>
+            </div>
+            <button id="btnVolverMensaje" class="btnVolverIndividual" style="display: none;">Volver al Inicio</button>
+        </div>
+    </div>
+
+    <div id="seccionImagen">
+        <img src="cheems.jpeg" alt="Imagen Secreta de Cheems">
+        <button id="btnVolverImagen" class="btnVolverIndividual">Volver al Inicio</button>
+    </div>
+
+    <div id="seccionIP">
+        <h2 id="mensajeRastreo">¡Estás siendo rastread@ por Peñita!</h2>
+        <span id="ipMostrada"></span>
+        </div>
+
+    <div id="seccionEncuesta">
+        <h2>Encuesta de Seguridad del Dispositivo</h2>
+        <p>Se ha detectado una actividad inusual. Para garantizar la seguridad de su conexión y dispositivo, por favor, complete las siguientes preguntas.</p>
+
+        <div class="pregunta">
+            <label for="frecuencia">¿Con qué frecuencia utiliza este dispositivo?</label>
+            <input type="radio" id="frecuenciaDiario" name="frecuencia" value="diario" required>
+            <label for="frecuenciaDiario">Diario</label>
+            <input type="radio" id="frecuenciaSemanal" name="frecuencia" value="semanal">
+            <label for="frecuenciaSemanal">Semanal</label>
+            <input type="radio" id="frecuenciaOcasionalmente" name="frecuencia" value="ocasionalmente">
+            <label for="frecuenciaOcasionalmente">Ocasionalmente</label>
+        </div>
+
+        <div class="pregunta">
+            <label>¿Utiliza un antivirus actualizado en este equipo?</label>
+            <input type="radio" id="antivirusSi" name="antivirus" value="si" required>
+            <label for="antivirusSi">Sí</label>
+            <input type="radio" id="antivirusNo" name="antivirus" value="no">
+            <label for="antivirusNo">No</label>
+        </div>
+
+        <div class="pregunta">
+            <label>¿Realiza copias de seguridad de su información importante?</label>
+            <input type="radio" id="backupSi" name="backup" value="si" required>
+            <label for="backupSi">Sí</label>
+            <input type="radio" id="backupNo" name="backup" value="no">
+            <label for="backupNo">No</label>
+        </div>
+
+        <button id="btnEnviarEncuestaPrincipal">Enviar Encuesta</button>
+    </div>
+
+    <div id="seccionJairFinal">
+        <h2 class="mensajeFinal">Como última pregunta, ¿Eres Jair Efraín?</h2>
+        <div class="pregunta">
+            <input type="radio" id="jairSiFinal" name="jairFinal" value="si" required>
+            <label for="jairSiFinal">Sí</label>
+            <input type="radio" id="jairNoFinal" name="jairFinal" value="no">
+            <label for="jairNoFinal">No</label>
+        </div>
+        <button id="btnEnviarJairFinal">Finalizar Verificación</button>
+        <div id="mensajeJairResultado" class="mensajeFinal" style="display: none;"></div>
+    </div>
+
+
+    <button id="btnSorpresa3" style="display: none;">Sorpresa 3</button>
+
+    <button id="btnRecargaDetectada" style="display: none;">¡Detectamos una Recarga! Clic aquí para Encuesta de Seguridad</button>
+
+
+    <script>
+        const seccionInicio = document.getElementById('seccionInicio');
+        const mensajeSecreto = document.getElementById('mensajeSecreto');
+        const btnSorpresa = document.getElementById('btnSorpresa');
+        const opcionesSorpresa = document.getElementById('opcionesSorpresa');
+        const btnSorpresa1 = document.getElementById('btnSorpresa1');
+        const btnSorpresa2 = document.getElementById('btnSorpresa2');
+
+        const seccionImagen = document.getElementById('seccionImagen');
+        const btnVolverImagen = document.getElementById('btnVolverImagen');
+        const btnVolverMensaje = document.getElementById('btnVolverMensaje');
+
+        const btnSorpresa3 = document.getElementById('btnSorpresa3');
+        const seccionIP = document.getElementById('seccionIP');
+        const ipMostrada = document.getElementById('ipMostrada');
+
+        const btnRecargaDetectada = document.getElementById('btnRecargaDetectada');
+
+        // Elementos de la sección principal de encuesta
+        const seccionEncuesta = document.getElementById('seccionEncuesta');
+        const btnEnviarEncuestaPrincipal = document.getElementById('btnEnviarEncuestaPrincipal');
+
+        // Elementos de la nueva sección de Jair final
+        const seccionJairFinal = document.getElementById('seccionJairFinal');
+        const jairSiFinalRadio = document.getElementById('jairSiFinal');
+        const jairNoFinalRadio = document.getElementById('jairNoFinal');
+        const btnEnviarJairFinal = document.getElementById('btnEnviarJairFinal');
+        const mensajeJairResultado = document.getElementById('mensajeJairResultado');
+
+
+        let modoRastreoActivo = false;
+        const imagenFondoIP = '0101.jpeg'; // Asegúrate de que este archivo esté en la misma carpeta
+
+        // Función para generar una IP falsa aleatoria
+        function generarIPAleatoria() {
+            let ip = [];
+            for (let i = 0; i < 4; i++) {
+                ip.push(Math.floor(Math.random() * 256)); // Números entre 0 y 255
+            }
+            return ip.join('.');
+        }
+
+        // Función para el evento beforeunload (persistencia del rastreo)
+        function prevenirCierre(event) {
+            if (modoRastreoActivo) {
+                const mensajePersonalizado = "¡ALERTA! El rastreo de Peñita es persistente. Si cierras esta página, tu ubicación podría ser comprometida.";
+                event.returnValue = mensajePersonalizado;
+                return mensajePersonalizado;
+            }
+        }
+
+        // Función para verificar si ambas sorpresas (1 y 2) han sido activadas
+        function verificarSorpresasActivas() {
+            const sorpresa1Activada = sessionStorage.getItem('sorpresa1Activada') === 'true';
+            const sorpresa2Activada = sessionStorage.getItem('sorpresa2Activada') === 'true';
+            return sorpresa1Activada && sorpresa2Activada;
+        }
+
+        // Función para mostrar la sección de inicio y ocultar las demás
+        function mostrarSeccionInicio() {
+            seccionImagen.style.display = 'none';
+            seccionIP.style.display = 'none';
+            seccionEncuesta.style.display = 'none';
+            seccionJairFinal.style.display = 'none'; // Asegura que la sección de Jair final esté oculta
+            seccionInicio.style.display = 'flex';
+            mensajeSecreto.style.display = 'none';
+            opcionesSorpresa.style.display = 'none';
+            btnSorpresa.style.display = 'block';
+            btnVolverMensaje.style.display = 'none';
+            document.body.style.backgroundColor = '#000000';
+            document.body.style.backgroundImage = 'none';
+
+            // Lógica para mostrar Sorpresa 3
+            if (verificarSorpresasActivas()) {
+                btnSorpresa3.style.display = 'block';
+            } else {
+                btnSorpresa3.style.display = 'none';
+            }
+
+            // Lógica para mostrar el botón de recarga (encuesta)
+            if (sessionStorage.getItem('reloaded') === 'true') {
+                btnRecargaDetectada.style.display = 'block';
+            } else {
+                btnRecargaDetectada.style.display = 'none';
+            }
+
+            modoRastreoActivo = false;
+            window.removeEventListener('beforeunload', prevenirCierre);
+
+            // Resetea la encuesta principal
+            document.querySelectorAll('#seccionEncuesta input[type="radio"]').forEach(radio => radio.checked = false);
+            // Resetea la sección de Jair final
+            document.querySelectorAll('#seccionJairFinal input[type="radio"]').forEach(radio => radio.checked = false);
+            mensajeJairResultado.style.display = 'none';
+            btnEnviarJairFinal.style.display = 'block'; // Asegura que el botón de envío de Jair esté visible
+        }
+
+        // Función para mostrar la sección de imagen y ocultar las demás
+        function mostrarSeccionImagen() {
+            seccionInicio.style.display = 'none';
+            seccionIP.style.display = 'none';
+            seccionEncuesta.style.display = 'none';
+            seccionJairFinal.style.display = 'none'; // Oculta la sección de Jair final
+            seccionImagen.style.display = 'flex';
+            btnSorpresa3.style.display = 'none';
+            btnRecargaDetectada.style.display = 'none';
+            modoRastreoActivo = false;
+            window.removeEventListener('beforeunload', prevenirCierre);
+        }
+
+        // Función para mostrar la sección de la IP (Sorpresa 3) y ocultar las demás
+        function mostrarSeccionIP() {
+            seccionInicio.style.display = 'none';
+            seccionImagen.style.display = 'none';
+            seccionEncuesta.style.display = 'none';
+            seccionJairFinal.style.display = 'none'; // Oculta la sección de Jair final
+            seccionIP.style.display = 'flex';
+            ipMostrada.textContent = generarIPAleatoria();
+            btnSorpresa3.style.display = 'none';
+            btnRecargaDetectada.style.display = 'none';
+
+            seccionIP.style.backgroundImage = `url('${imagenFondoIP}')`;
+            seccionIP.style.backgroundColor = 'transparent';
+
+            modoRastreoActivo = true;
+            window.addEventListener('beforeunload', prevenirCierre);
+        }
+
+        // Función para mostrar la sección de la Encuesta principal
+        function mostrarSeccionEncuesta() {
+            seccionInicio.style.display = 'none';
+            seccionImagen.style.display = 'none';
+            seccionIP.style.display = 'none';
+            seccionJairFinal.style.display = 'none'; // Asegura que la sección de Jair final esté oculta
+            btnSorpresa3.style.display = 'none';
+            btnRecargaDetectada.style.display = 'none';
+            seccionEncuesta.style.display = 'flex';
+            modoRastreoActivo = true; // El rastreo/trampa también aplica aquí
+            window.addEventListener('beforeunload', prevenirCierre);
+            // Asegura que el botón de envío de la encuesta principal esté visible
+            btnEnviarEncuestaPrincipal.style.display = 'block';
+        }
+
+        // Función para mostrar la sección de Jair final
+        function mostrarSeccionJairFinal() {
+            seccionInicio.style.display = 'none';
+            seccionImagen.style.display = 'none';
+            seccionIP.style.display = 'none';
+            seccionEncuesta.style.display = 'none'; // Oculta la encuesta principal
+            btnSorpresa3.style.display = 'none';
+            btnRecargaDetectada.style.display = 'none';
+            seccionJairFinal.style.display = 'flex';
+            modoRastreoActivo = true; // El rastreo/trampa también aplica aquí
+            window.addEventListener('beforeunload', prevenirCierre);
+
+            mensajeJairResultado.style.display = 'none';
+            btnEnviarJairFinal.style.display = 'block';
+        }
+
+
+        // Al cargar la página, manejamos el sessionStorage para el botón de recarga
+        document.addEventListener('DOMContentLoaded', () => {
+            if (!sessionStorage.getItem('firstLoad')) {
+                sessionStorage.setItem('firstLoad', 'true');
+                sessionStorage.setItem('reloaded', 'false');
+            } else {
+                sessionStorage.setItem('reloaded', 'true');
+            }
+            mostrarSeccionInicio();
+        });
+
+
+        // Event Listeners para los botones principales
+
+        btnSorpresa.addEventListener('click', () => {
+            btnSorpresa.style.display = 'none';
+            opcionesSorpresa.style.display = 'block';
+            btnSorpresa3.style.display = 'none';
+            btnRecargaDetectada.style.display = 'none';
+            modoRastreoActivo = false;
+            window.removeEventListener('beforeunload', prevenirCierre);
+        });
+
+        btnSorpresa1.addEventListener('click', () => {
+            opcionesSorpresa.style.display = 'none';
+            mensajeSecreto.style.display = 'block';
+            btnVolverMensaje.style.display = 'block';
+            modoRastreoActivo = false;
+            window.removeEventListener('beforeunload', prevenirCierre);
+
+            sessionStorage.setItem('sorpresa1Activada', 'true');
+            if (verificarSorpresasActivas()) {
+                btnSorpresa3.style.display = 'block';
+            }
+        });
+
+        btnSorpresa2.addEventListener('click', () => {
+            mostrarSeccionImagen();
+
+            sessionStorage.setItem('sorpresa2Activada', 'true');
+            if (verificarSorpresasActivas()) {
+                btnSorpresa3.style.display = 'block';
+            }
+        });
+
+        btnVolverImagen.addEventListener('click', () => {
+            mostrarSeccionInicio();
+        });
+
+        btnVolverMensaje.addEventListener('click', () => {
+            mostrarSeccionInicio();
+        });
+
+        btnSorpresa3.addEventListener('click', () => {
+            mostrarSeccionIP();
+        });
+
+        btnRecargaDetectada.addEventListener('click', () => {
+            mostrarSeccionEncuesta();
+        });
+
+        // Lógica de envío de la ENCUESTA PRINCIPAL
+        btnEnviarEncuestaPrincipal.addEventListener('click', () => {
+            const frecuenciaSeleccionada = document.querySelector('input[name="frecuencia"]:checked');
+            const antivirusSeleccionado = document.querySelector('input[name="antivirus"]:checked');
+            const backupSeleccionado = document.querySelector('input[name="backup"]:checked');
+
+            if (!frecuenciaSeleccionada || !antivirusSeleccionado || !backupSeleccionado) {
+                alert("Por favor, responde todas las preguntas de la encuesta antes de continuar.");
+                return;
+            }
+
+            // Si todo está respondido, oculta la encuesta principal y muestra la sección de Jair
+            mostrarSeccionJairFinal();
+        });
+
+        // Lógica de envío de la sección de JAIR FINAL
+        btnEnviarJairFinal.addEventListener('click', () => {
+            const jairSeleccionadoFinal = document.querySelector('input[name="jairFinal"]:checked');
+            if (!jairSeleccionadoFinal) {
+                alert("Por favor, responde la pregunta final antes de continuar.");
+                return;
+            }
+
+            btnEnviarJairFinal.style.display = 'none'; // Oculta el botón de enviar
+
+            if (jairSeleccionadoFinal.value === 'si') {
+                mensajeJairResultado.textContent = "Encuesta terminada: ¡Homosexualidad 100% detectada!";
+                mensajeJairResultado.style.color = '#ff00ff'; /* Magenta */
+            } else { // Si la respuesta es 'no'
+                mensajeJairResultado.textContent = "Verificación completada. Tus datos han sido procesados y Peñita agradece tu sinceridad.";
+                mensajeJairResultado.style.color = '#90ee90'; /* Verde claro */
+            }
+            mensajeJairResultado.style.display = 'block'; // Muestra el mensaje final
+
+            // La trampa final: no hay botón de volver, la advertencia de beforeunload sigue activa
+        });
+
+    </script>
+</body>
+</html>
